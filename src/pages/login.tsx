@@ -20,6 +20,7 @@ import {
     useMergeRefs,
 } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
+import { Router, useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 
 import PasswordField from '@/components/login/passwordField';
@@ -27,6 +28,7 @@ import { getShoiriAPI } from '@/request/shiori';
 import { t } from '@/translation';
 
 export default function Login() {
+    const router = useRouter();
     let api = getShoiriAPI();
     const inputRef = useRef<{
         username: HTMLInputElement | null;
@@ -56,7 +58,7 @@ export default function Login() {
                 return j;
             })
             .then(
-                (jsonResponse: {
+                async (jsonResponse: {
                     account: object;
                     expires: string;
                     session: string;
@@ -67,10 +69,21 @@ export default function Login() {
                         JSON.stringify(jsonResponse),
                     );
                     localStorage.setItem('XSessionId', jsonResponse.session);
+                    console.log(
+                        'XSessionId ls',
+                        localStorage.getItem('XSessionId'),
+                    );
                 },
-            );
+            )
+            .then(() => router.push('/dashboard'));
         // event.target.reset();
     };
+
+    useEffect(() => {
+        // if (localStorage.getItem('XSessionId')) {
+        //     router.push('/dashboard');
+        // }
+    });
 
     return (
         <Container
@@ -143,7 +156,7 @@ export default function Login() {
                                     colorScheme="blue"
                                     onClick={handleSubmit}
                                 >
-                                    Sign in {t('signin')}
+                                    {t('signin')}
                                 </Button>
                                 {/* <HStack>
                 <Divider />

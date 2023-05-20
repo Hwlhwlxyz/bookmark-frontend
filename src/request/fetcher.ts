@@ -1,3 +1,5 @@
+// let XSessionId: null | string = null;
+
 function updateOptions(options: any) {
     const update = { ...options };
     update.mode = 'cors';
@@ -12,6 +14,7 @@ function updateOptions(options: any) {
             'X-Session-Id': `${localStorage.XSessionId}`,
         };
     }
+    console.log("updatoptions:", update)
     return update;
 }
 

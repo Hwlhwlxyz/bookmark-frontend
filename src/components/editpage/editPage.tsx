@@ -33,8 +33,6 @@ export default function EditPage(props: EditPageProps) {
     const {
         control,
         handleSubmit,
-        reset,
-        setValue,
         register,
         formState: { errors },
     } = useForm({
@@ -70,15 +68,6 @@ export default function EditPage(props: EditPageProps) {
                 throw e;
             }),
     );
-    const { trigger } = useSWRMutation(
-        '/api/user',
-        async (_url: string, params) => {
-            console.log('params', params);
-            const res = await f.editBookmarks(params.arg as Bookmark);
-            return res;
-        },
-        {},
-    );
 
     const onSubmit = (data: any) => {
         // console.log('submit');
@@ -113,12 +102,6 @@ export default function EditPage(props: EditPageProps) {
 
         props.onSubmit(data);
     };
-
-    function setChosenTags(
-        choice: MultiValue<{ value: string; label: string }>,
-    ): void {
-        console.log(choice);
-    }
 
     function isValidUrl(str: string | undefined) {
         if (str == undefined) {
@@ -164,19 +147,19 @@ export default function EditPage(props: EditPageProps) {
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Box>
-                    <Input placeholder="title" {...register('title')} />
-                </Box>
-                <Box>
                     <Input
                         placeholder="url"
                         {...register('url', {
                             required: true,
-                            validate: (value, formValues) => isValidUrl(value),
+                            validate: (value) => isValidUrl(value),
                         })}
                     />
                     {errors?.url?.type === 'required' && (
                         <p>This field is required</p>
                     )}
+                </Box>
+                <Box>
+                    <Input placeholder="title" {...register('title')} />
                 </Box>
                 <Box>
                     <Controller
@@ -185,7 +168,7 @@ export default function EditPage(props: EditPageProps) {
                         // defaultValue={bookmarkToEdit?.tags.map((e: BookmarkTag) => {
                         //   return { value: e.name, label: e.name };
                         // })}
-                        render={({ field: { onChange, value, ref } }) => (
+                        render={({ field: { onChange, value } }) => (
                             <Editor
                                 value={value}
                                 onChange={(val) => onChange(val)}
@@ -201,7 +184,7 @@ export default function EditPage(props: EditPageProps) {
                         // defaultValue={bookmarkToEdit?.tags.map((e: BookmarkTag) => {
                         //   return { value: e.name, label: e.name };
                         // })}
-                        render={({ field: { onChange, value, ref } }) => (
+                        render={({ field: { onChange } }) => (
                             <CreatableSelect
                                 // value={options.filter(c => value.includes(c.value))}
                                 defaultValue={

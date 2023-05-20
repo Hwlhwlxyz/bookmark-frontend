@@ -1,3 +1,6 @@
 {
-    "signin": "登录"
+    "signin": "登录",
+    "Please login": "请登录",
+    "addSuccessfully":"添加成功",
+    "addFailed":"添加失败"
 }

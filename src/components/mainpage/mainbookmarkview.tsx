@@ -1,4 +1,12 @@
-import { Box, Button, useDisclosure } from '@chakra-ui/react';
+import { SearchIcon } from '@chakra-ui/icons';
+import {
+    Box,
+    Button,
+    Input,
+    InputGroup,
+    InputLeftElement,
+    useDisclosure,
+} from '@chakra-ui/react';
 import {
     AlertDialog,
     AlertDialogBody,
@@ -9,22 +17,48 @@ import {
 } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
-import { LegacyRef, useRef, useState } from 'react';
+import { ChangeEvent, LegacyRef, useEffect, useRef, useState } from 'react';
+import ReactPaginate from 'react-paginate';
 import useSWR from 'swr';
 import { useSWRConfig } from 'swr';
 import useSWRMutation from 'swr/mutation';
 
 import { bookmarkAtom } from '@/jotai/atom';
 import { getShoiriAPI } from '@/request/shiori';
+import styles from '@/styles/pagination.module.css';
 import { Bookmark } from '@/types/bookmark';
 
 import Bookmarkcard from '../bookmarkcard/bookmarkcard';
 
 // main page to display bookmarks
-export default function Mainpage(props: {
+export default function MainBookmarkView(props: {
     bookmarks: Bookmark[];
     updateTrigger: any;
 }) {
+    const [countPerPage, setCountPerPage] = useState(10);
+    const [pagenumber, setPageNumber] = useState(1);
+    const [totalPageNumber, setTotalPageNumber] = useState(1);
+    const [bookmarksToDisplay, setBookmarksToDisplay] = useState<Bookmark[]>(
+        [],
+    );
+    const [keyword, setKeyword] = useState('');
+
+    useEffect(() => {
+        setTotalPageNumber(Math.ceil(props.bookmarks.length / countPerPage));
+    });
+
+    useEffect(() => {
+        let bmArray = props.bookmarks;
+        if (keyword.length > 0) {
+            bmArray = bmArray.filter(
+                (e) =>
+                    e.url.includes(keyword) ||
+                    e.title.includes(keyword) ||
+                    e.excerpt.includes(keyword),
+            );
+        }
+    }, [countPerPage, pagenumber, keyword]);
+
     let f = getShoiriAPI();
     const [bookmarkToEdit, setBookmarkToEdit] = useAtom(bookmarkAtom);
     const [bookmarkToDelete, setBookmarkToDelete] = useState<Bookmark | null>(
@@ -70,8 +104,30 @@ export default function Mainpage(props: {
         }
     }
 
+    function handleClickPage(p: number) {
+        console.log('handleclickpage:', p);
+        setPageNumber(p);
+    }
+
     return (
-        <div style={{ width: '100%' }}>
+        <div id="container" style={{ width: '100%' }}>
+            {/* <InputGroup>
+                <InputLeftElement
+                    className="InputLeft"
+                    pointerEvents="none"
+                    children={
+                        <SearchIcon className="SearchIcon" color="gray.300" />
+                    }
+                />
+                <Input
+                    className="Input"
+                    variant="outline"
+                    // size="xs"
+                    placeholder={``}
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                />
+            </InputGroup> */}
             {props.bookmarks &&
                 props.bookmarks.map((e: Bookmark) => {
                     let bookmark = e;
@@ -103,6 +159,8 @@ export default function Mainpage(props: {
                 onClickDelete={undefined}
             /> */}
 
+            {/* <p>page pagenumber:{pagenumber}</p> */}
+
             <AlertDialog
                 isOpen={isOpen}
                 leastDestructiveRef={cancelRef}
@@ -111,7 +169,7 @@ export default function Mainpage(props: {
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                            Delete Customer
+                            Delete
                         </AlertDialogHeader>
 
                         <AlertDialogBody>

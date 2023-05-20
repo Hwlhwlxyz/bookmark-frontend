@@ -4,7 +4,7 @@ import fetcher from './fetcher';
 
 let api: shioriAPI;
 
-function parseResponse(res: Response) {
+function parseResponse(res: Response): Response | Promise<string | Object | any> {
     const contentType = res.headers.get('content-type')!;
     console.log('contentType', contentType);
     if (res.ok) {
@@ -38,8 +38,34 @@ class shioriAPI {
         }).then(res => parseResponse(res));
     }
 
-    getBookmarks() {
-        return fetcher(this.baseUrl + '/bookmarks', {
+    getBookmarksApiUrl(page: number, keyword: string | null = null, tags: any[] | null = null, excludedTags: any[] | null = null) {
+        let queryObject: any = {};
+        if (keyword != null) {
+            queryObject['keyword'] = keyword;
+        }
+        if (page != null) {
+            queryObject['page'] = page;
+        }
+        if (tags != null) {
+            queryObject['tags'] = tags.join(',');
+        }
+        if (excludedTags != null) {
+            queryObject['exclude'] = excludedTags.join(',');
+        }
+        return this.baseUrl + '/bookmarks?' + new URLSearchParams(queryObject);
+    }
+
+    // var url = new URL("api/bookmarks", document.baseURI);
+    // 		url.search = new URLSearchParams({
+    // 			keyword: keyword,
+    // 			tags: tags.join(","),
+    // 			exclude: excludedTags.join(","),
+    // 			page: this.page
+    // 		});
+    // https://github.com/go-shiori/shiori/issues/173
+    // https://github.com/go-shiori/shiori/blob/f6f3faf1300f3ad95dfd3dcaaeb82467a1955492/internal/webserver/handler-api.go#L162
+    getBookmarks(page: number, keyword: string | null = null, tags: any[] | null = null, excludedTags: any[] | null = null) {
+        return fetcher(this.getBookmarksApiUrl(page, keyword, tags, excludedTags), {
             method: 'GET',
         }).then(res => parseResponse(res));
     }
@@ -57,6 +83,10 @@ class shioriAPI {
             method: 'POST',
             body: JSON.stringify(data),
         });
+    }
+
+    getAddBookmarkUrl() {
+        return this.baseUrl + '/bookmarks';
     }
 
     addBookmark(bookmark: Bookmark) {
