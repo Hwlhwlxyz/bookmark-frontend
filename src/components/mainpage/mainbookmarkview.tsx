@@ -35,30 +35,6 @@ export default function MainBookmarkView(props: {
     bookmarks: Bookmark[];
     updateTrigger: any;
 }) {
-    const [countPerPage, setCountPerPage] = useState(10);
-    const [pagenumber, setPageNumber] = useState(1);
-    const [totalPageNumber, setTotalPageNumber] = useState(1);
-    const [bookmarksToDisplay, setBookmarksToDisplay] = useState<Bookmark[]>(
-        [],
-    );
-    const [keyword, setKeyword] = useState('');
-
-    useEffect(() => {
-        setTotalPageNumber(Math.ceil(props.bookmarks.length / countPerPage));
-    });
-
-    useEffect(() => {
-        let bmArray = props.bookmarks;
-        if (keyword.length > 0) {
-            bmArray = bmArray.filter(
-                (e) =>
-                    e.url.includes(keyword) ||
-                    e.title.includes(keyword) ||
-                    e.excerpt.includes(keyword),
-            );
-        }
-    }, [countPerPage, pagenumber, keyword]);
-
     let f = getShoiriAPI();
     const [bookmarkToEdit, setBookmarkToEdit] = useAtom(bookmarkAtom);
     const [bookmarkToDelete, setBookmarkToDelete] = useState<Bookmark | null>(
@@ -104,30 +80,8 @@ export default function MainBookmarkView(props: {
         }
     }
 
-    function handleClickPage(p: number) {
-        console.log('handleclickpage:', p);
-        setPageNumber(p);
-    }
-
     return (
         <div id="container" style={{ width: '100%' }}>
-            {/* <InputGroup>
-                <InputLeftElement
-                    className="InputLeft"
-                    pointerEvents="none"
-                    children={
-                        <SearchIcon className="SearchIcon" color="gray.300" />
-                    }
-                />
-                <Input
-                    className="Input"
-                    variant="outline"
-                    // size="xs"
-                    placeholder={``}
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                />
-            </InputGroup> */}
             {props.bookmarks &&
                 props.bookmarks.map((e: Bookmark) => {
                     let bookmark = e;
@@ -159,8 +113,6 @@ export default function MainBookmarkView(props: {
                 onClickDelete={undefined}
             /> */}
 
-            {/* <p>page pagenumber:{pagenumber}</p> */}
-
             <AlertDialog
                 isOpen={isOpen}
                 leastDestructiveRef={cancelRef}
@@ -173,7 +125,7 @@ export default function MainBookmarkView(props: {
                         </AlertDialogHeader>
 
                         <AlertDialogBody>
-                            Are you sure? You can't undo this action afterwards.
+                            {`Are you sure? You can't undo this action afterwards.`}
                         </AlertDialogBody>
 
                         <AlertDialogFooter>

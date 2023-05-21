@@ -5,6 +5,7 @@ import {
     Input,
     InputGroup,
     InputLeftElement,
+    Link,
 } from '@chakra-ui/react';
 import { useToast } from '@chakra-ui/react';
 import NextLink from 'next/link';
@@ -23,7 +24,7 @@ export default function Index() {
     const [pagenumber, setPagenumber] = useState(1);
     const [totalPageNumber, setTotalPageNumber] = useState(1);
     const [keyword, setKeyword] = useState<string>('');
-    const [keywordvalue, setKeywordvalue] = useDebounce(keyword, 1000);
+    const [keywordvalue, setKeywordvalue] = useDebounce(keyword, 500);
 
     const toast = useToast();
     const router = useRouter();
@@ -66,7 +67,14 @@ export default function Index() {
                 toast({
                     id: 'dashboard-needlogin',
                     title: t('Please login'),
-                    description: String(error),
+                    description: (
+                        <div>
+                            String(error){' '}
+                            <Link id="logintoast" className="" href="/login">
+                                login
+                            </Link>
+                        </div>
+                    ),
                     status: 'error',
                     duration: 3000,
                     isClosable: true,
@@ -75,40 +83,6 @@ export default function Index() {
         }
     });
 
-    if (error) {
-        // if (!toast.isActive('dashboard-needlogin')) {
-        //     toast({
-        //         id: 'dashboard-needlogin',
-        //         title: t('Please login'),
-        //         description: String(error),
-        //         status: 'error',
-        //         duration: 3000,
-        //         isClosable: true,
-        //     });
-        // }
-        // toast.close('dashboard-needlogin');
-        // router.push('/login');
-        console.log(error);
-        return (
-            <Box>
-                <p>error {JSON.stringify(error)}</p>
-            </Box>
-        );
-    } else if (isLoading) {
-        return (
-            <Box>
-                <p>loading</p>
-            </Box>
-        );
-    }
-
-    if (data?.bookmarks == undefined) {
-        return (
-            <Box>
-                <p>{JSON.stringify(data)}</p>
-            </Box>
-        );
-    }
     return (
         <Box width={'100%'}>
             <Box>
@@ -117,13 +91,10 @@ export default function Index() {
                 </Button>
             </Box>
             <InputGroup>
-                <InputLeftElement
-                    className="InputLeft"
-                    pointerEvents="none"
-                    children={
-                        <SearchIcon className="SearchIcon" color="gray.300" />
-                    }
-                />
+                <InputLeftElement className="InputLeft" pointerEvents="none">
+                    {<SearchIcon className="SearchIcon" color="gray.300" />}
+                </InputLeftElement>
+
                 <Input
                     key="keywordsearch"
                     autoFocus
@@ -135,21 +106,34 @@ export default function Index() {
                     onChange={(e) => handleChangeKeyword(e)}
                 />
             </InputGroup>
-            keywordvalue:{keywordvalue}
-            <MainBookmarkView
-                bookmarks={data.bookmarks || []}
-                updateTrigger={() => mutate()}
-            />
+            {/* keywordvalue:{keywordvalue} */}
+
+            {data ? (
+                <>
+                    <MainBookmarkView
+                        bookmarks={data.bookmarks || []}
+                        updateTrigger={() => mutate()}
+                    />
+                    <Pagination
+                        className={styles.pagination}
+                        selectedClassName={styles.selected}
+                        pageNumber={pagenumber || 1}
+                        totalPageNumber={data.maxPage}
+                        hrefPrefix={null}
+                        pageRangeDisplayed={undefined}
+                        onClickPage={(p: number) => handleClickPage(p)}
+                    />
+                </>
+            ) : (
+                <></>
+            )}
+            {error && (
+                <Box>
+                    <p>error {JSON.stringify(error)}</p>
+                </Box>
+            )}
+            {isLoading && <Box>loading</Box>}
             {/* pagination here */}
-            <Pagination
-                className={styles.pagination}
-                selectedClassName={styles.selected}
-                pageNumber={pagenumber || 1}
-                totalPageNumber={data.maxPage}
-                hrefPrefix={null}
-                pageRangeDisplayed={undefined}
-                onClickPage={(p: number) => handleClickPage(p)}
-            />
         </Box>
     );
 }

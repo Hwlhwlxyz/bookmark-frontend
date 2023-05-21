@@ -9,7 +9,7 @@ import Mainpage from '@/components/mainpage/mainbookmarkview';
 import { getShoiriAPI } from '@/request/shiori';
 import { t } from '@/translation';
 
-export default function IndexTag() {
+export default function Search() {
     const toast = useToast();
     const router = useRouter();
     let f = getShoiriAPI();
