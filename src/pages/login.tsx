@@ -22,6 +22,7 @@ import {
 import dynamic from 'next/dynamic';
 import { Router, useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
+import { preload } from 'swr';
 
 import PasswordField from '@/components/login/passwordField';
 import { getShoiriAPI } from '@/request/shiori';
@@ -73,17 +74,27 @@ export default function Login() {
                         'XSessionId ls',
                         localStorage.getItem('XSessionId'),
                     );
+                    let pagenumber = 1;
+                    // use preload to prevent redirecting from dashboard to the login page
+                    preload(api.getBookmarksApiUrl(pagenumber), () =>
+                        api.getBookmarks(pagenumber).catch(async (e) => {
+                            console.log('error', e);
+                            console.log('error', 'not login');
+                            if (e.text) {
+                                let t = await e.text();
+                                throw t;
+                            } else {
+                                throw e.statusText;
+                            }
+                        }),
+                    );
                 },
             )
-            .then(() => router.push('/dashboard'));
-        // event.target.reset();
+            .then(() => router.push('/dashboard'))
+            .catch((e) => {
+                console.log('login error:', e);
+            });
     };
-
-    useEffect(() => {
-        // if (localStorage.getItem('XSessionId')) {
-        //     router.push('/dashboard');
-        // }
-    });
 
     return (
         <Container

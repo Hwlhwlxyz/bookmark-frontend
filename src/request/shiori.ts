@@ -184,7 +184,7 @@ export function getShoiriAPI() {
     if (api) {
         return api;
     }
-    let baseUrl = 'http://localhost:8080';
+    let baseUrl = ''; //http://localhost:8080
     if (process.env.NEXT_PUBLIC_SHIORI_HOST) {
         baseUrl = process.env.NEXT_PUBLIC_SHIORI_HOST;
     }

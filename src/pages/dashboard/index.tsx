@@ -80,6 +80,7 @@ export default function Index() {
                     isClosable: true,
                 });
             }
+            router.push('/login');
         }
     });
 

@@ -1,6 +1,7 @@
 import { Inter } from 'next/font/google';
 import Head from 'next/head';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 import styles from '@/styles/Home.module.css';
@@ -8,8 +9,9 @@ import styles from '@/styles/Home.module.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
+    const router = useRouter();
     useEffect(() => {
-        window.location.href = window.location.href + '/' + 'login';
+        router.push('/login');
     });
 
     return (
