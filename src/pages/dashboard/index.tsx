@@ -5,13 +5,12 @@ import {
     Input,
     InputGroup,
     InputLeftElement,
-    Link,
 } from '@chakra-ui/react';
 import { useToast } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import useSWR from 'swr';
 import { useDebounce } from 'use-debounce';
 
@@ -19,14 +18,8 @@ import MainBookmarkView from '@/components/mainpage/mainbookmarkview';
 import { Pagination } from '@/components/parts/pagination';
 import { userSessionAtom } from '@/jotai/atom';
 import fetcher from '@/request/fetcher';
-import {
-    getBookmarksApiUrl,
-    getShoiriAPI,
-    parseResponse,
-    urlstring,
-} from '@/request/shiori';
+import { getBookmarksApiUrl, parseResponse } from '@/request/shiori';
 import styles from '@/styles/pagination.module.css';
-import { t } from '@/translation';
 import { UserSession } from '@/types/user';
 
 export default function Index() {

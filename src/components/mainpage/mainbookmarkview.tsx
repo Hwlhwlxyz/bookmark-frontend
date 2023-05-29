@@ -1,12 +1,4 @@
-import { SearchIcon } from '@chakra-ui/icons';
-import {
-    Box,
-    Button,
-    Input,
-    InputGroup,
-    InputLeftElement,
-    useDisclosure,
-} from '@chakra-ui/react';
+import { Button, useDisclosure } from '@chakra-ui/react';
 import {
     AlertDialog,
     AlertDialogBody,
@@ -17,15 +9,10 @@ import {
 } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
-import { ChangeEvent, LegacyRef, useEffect, useRef, useState } from 'react';
-import ReactPaginate from 'react-paginate';
-import useSWR from 'swr';
-import { useSWRConfig } from 'swr';
-import useSWRMutation from 'swr/mutation';
+import { useEffect, useRef, useState } from 'react';
 
 import { bookmarkAtom } from '@/jotai/atom';
 import { getShoiriAPI } from '@/request/shiori';
-import styles from '@/styles/pagination.module.css';
 import { Bookmark } from '@/types/bookmark';
 
 import Bookmarkcard from '../bookmarkcard/bookmarkcard';
