@@ -86,6 +86,7 @@ export default function Bookmarkcard(props: BookmarkProps) {
                                 props.tags.map((t) => {
                                     return (
                                         <Link
+                                            key={props.link + t.name}
                                             href={
                                                 '/dashboard/search?tags=' +
                                                 parseObjToUrl([t.name])
