@@ -25,6 +25,9 @@ dependencies:
   '@uiw/react-md-editor':
     specifier: ^3.20.8
     version: 3.20.8(@types/react@18.0.33)(react-dom@18.2.0)(react@18.2.0)
+  crypto-js:
+    specifier: ^4.1.1
+    version: 4.1.1
   eslint:
     specifier: 8.38.0
     version: 8.38.0
@@ -58,9 +61,6 @@ dependencies:
   react-icons:
     specifier: ^4.8.0
     version: 4.8.0(react@18.2.0)
-  react-paginate:
-    specifier: ^8.2.0
-    version: 8.2.0(react@18.2.0)
   react-select:
     specifier: ^5.7.2
     version: 5.7.2(@types/react@18.0.33)(react-dom@18.2.0)(react@18.2.0)
@@ -78,6 +78,9 @@ devDependencies:
   '@trivago/prettier-plugin-sort-imports':
     specifier: ^4.1.1
     version: 4.1.1(prettier@2.8.8)
+  '@types/crypto-js':
+    specifier: ^4.1.1
+    version: 4.1.1
   '@types/react-burger-menu':
     specifier: ^2.8.3
     version: 2.8.3
@@ -1781,6 +1784,10 @@ packages:
       - supports-color
     dev: true
 
+  /@types/crypto-js@4.1.1:
+    resolution: {integrity: sha512-BG7fQKZ689HIoc5h+6D2Dgq1fABRa0RbBWKBd9SP/MVRVXROflpm5fhwyATX5duFmbStzyzyycPB8qUYKDH3NA==}
+    dev: true
+
   /@types/debug@4.1.7:
     resolution: {integrity: sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg==}
     dependencies:
@@ -2546,6 +2553,10 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+    dev: false
+
+  /crypto-js@4.1.1:
+    resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==}
     dev: false
 
   /css-box-model@1.2.1:
@@ -4881,15 +4892,6 @@ packages:
       vfile: 5.3.7
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  /react-paginate@8.2.0(react@18.2.0):
-    resolution: {integrity: sha512-sJCz1PW+9PNIjUSn919nlcRVuleN2YPoFBOvL+6TPgrH/3lwphqiSOgdrLafLdyLDxsgK+oSgviqacF4hxsDIw==}
-    peerDependencies:
-      react: ^16 || ^17 || ^18
-    dependencies:
-      prop-types: 15.8.1
-      react: 18.2.0
     dev: false
 
   /react-remove-scroll-bar@2.3.4(@types/react@18.0.33)(react@18.2.0):
