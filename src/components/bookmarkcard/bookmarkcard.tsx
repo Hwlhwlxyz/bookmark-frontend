@@ -1,6 +1,3 @@
-import Link from 'next/link';
-
-import { BookmarkTag } from '@/types/bookmark';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 // import Image from "next/image";
 import {
@@ -16,6 +13,10 @@ import {
     Stack,
     Text,
 } from '@chakra-ui/react';
+import Link from 'next/link';
+
+import { BookmarkTag } from '@/types/bookmark';
+import { parseObjToUrl } from '@/util/util';
 
 interface BookmarkProps {
     imgSrc: string;
@@ -84,14 +85,22 @@ export default function Bookmarkcard(props: BookmarkProps) {
                             {props.tags &&
                                 props.tags.map((t) => {
                                     return (
-                                        <Button
-                                            key={t.id}
-                                            size="sm"
-                                            variant="solid"
-                                            colorScheme="blue"
+                                        <Link
+                                            href={
+                                                '/dashboard/search?tags=' +
+                                                parseObjToUrl([t.name])
+                                            }
                                         >
-                                            {t.name}
-                                        </Button>
+                                            <Button
+                                                type="button"
+                                                key={t.id}
+                                                size="sm"
+                                                variant="solid"
+                                                colorScheme="blue"
+                                            >
+                                                {t.name}
+                                            </Button>
+                                        </Link>
                                     );
                                 })}
                         </Flex>

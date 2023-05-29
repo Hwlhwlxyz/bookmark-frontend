@@ -5,7 +5,7 @@ import { slide as Menu, Styles } from 'react-burger-menu';
 
 import styles from '@/styles/Home.module.css';
 
-import Header from './parts/header';
+import Header from '../parts/header';
 
 let bgstyles = {
     bmBurgerButton: {

@@ -1,6 +1,4 @@
-// let XSessionId: null | string = null;
-
-function updateOptions(options: any) {
+function updateOptions(options: any, session: string | null) {
     const update = { ...options };
     update.mode = 'cors';
     update.headers = {
@@ -8,16 +6,23 @@ function updateOptions(options: any) {
         "Content-Type": "application/json",
         'Accept': 'application/json'
     }
-    if (localStorage.XSessionId) {
+    if (session != null) {
         update.headers = {
             ...update.headers,
-            'X-Session-Id': `${localStorage.XSessionId}`,
+            'X-Session-Id': session,
+        };
+    }
+    else if (localStorage.XSessionId) {
+        update.headers = {
+            ...update.headers,
+            'X-Session-Id': `${JSON.parse(localStorage.XSessionId).session}`,
         };
     }
     console.log("updatoptions:", update)
     return update;
 }
 
-export default function fetcher(url: string, options: any) {
-    return fetch(url, updateOptions(options));
+export default function fetcher(url: string, options: any, session: string | null = null) {
+    console.log('fetcher:', url, options, session)
+    return fetch(url, updateOptions(options, session));
 }

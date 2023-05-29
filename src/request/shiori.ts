@@ -1,10 +1,14 @@
-import { Bookmark } from '@/types/bookmark';
+import { Bookmark, BookmarkTag } from '@/types/bookmark';
 
 import fetcher from './fetcher';
 
 let api: shioriAPI;
-
-function parseResponse(res: Response): Response | Promise<string | Object | any> {
+let baseUrl = ''; //http://localhost:8080
+if (process.env.NEXT_PUBLIC_SHIORI_HOST) {
+    baseUrl = process.env.NEXT_PUBLIC_SHIORI_HOST;
+}
+let baseAPIUrl = baseUrl + '/api'
+export function parseResponse(res: Response): Response | Promise<string | Object | any> {
     const contentType = res.headers.get('content-type')!;
     console.log('contentType', contentType);
     if (res.ok) {
@@ -17,6 +21,66 @@ function parseResponse(res: Response): Response | Promise<string | Object | any>
         return res;
     }
     return res;
+}
+
+interface LoginQueryType {
+    username: string; password: string
+}
+interface BookmarkQueryType {
+    page: number; keyword: string | null; tags: any[] | null; excludedTags: any[] | null
+}
+interface BookmarkEditType {
+    id: string,
+    url: string,
+    title: string,
+    excerpt: string,
+    // "author": "AUTHOR",
+    // public: 1,
+    // "modified": "2019-09-22 00:00:00",
+    imageURL: string,
+    // "hasContent": false,
+    // "hasArchive": false,
+    tags: BookmarkTag[],
+    createArchive: false,
+}
+interface TagQueryType {
+    id: number; name: string
+}
+
+export const urlstring = {
+    login: baseAPIUrl + '/login',
+    bookmark: baseAPIUrl + '/bookmarks',
+    tag: baseAPIUrl + '/tags'
+}
+
+export function getBookmarksApiUrl(page: number, keyword: string | null = null, tags: any[] | null = null, excludedTags: any[] | null = null) {
+    let queryObject: any = {};
+    if (keyword != null) {
+        queryObject['keyword'] = keyword;
+    }
+    if (page != null) {
+        queryObject['page'] = page;
+    }
+    if (tags != null) {
+        queryObject['tags'] = tags.join(',');
+    }
+    if (excludedTags != null) {
+        queryObject['exclude'] = excludedTags.join(',');
+    }
+    return baseAPIUrl + '/bookmarks?' + new URLSearchParams(queryObject);
+}
+
+export function apilogin(username: string, password: string) {
+    let data = {
+        username: username,
+        password: password,
+        remember: true,
+        owner: true,
+    };
+    return fetcher(baseAPIUrl + '/login', {
+        method: 'POST',
+        body: JSON.stringify(data),
+    }).then(res => parseResponse(res));
 }
 
 class shioriAPI {
@@ -161,6 +225,10 @@ class shioriAPI {
         }).then(res => parseResponse(res));
     }
 
+    getTagsUrl() {
+        return this.baseUrl + '/tags';
+    }
+
     getTags() {
         return fetcher(this.baseUrl + '/tags', {
             method: 'GET',
@@ -182,6 +250,7 @@ class shioriAPI {
 export function getShoiriAPI() {
     console.log(process.env.SHIORI_HOST)
     if (api) {
+        console.log("return old api")
         return api;
     }
     let baseUrl = ''; //http://localhost:8080

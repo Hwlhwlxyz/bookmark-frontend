@@ -8,6 +8,7 @@ import {
     Link,
 } from '@chakra-ui/react';
 import { useToast } from '@chakra-ui/react';
+import { useAtom } from 'jotai';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { ChangeEvent, useEffect, useState } from 'react';
@@ -16,40 +17,37 @@ import { useDebounce } from 'use-debounce';
 
 import MainBookmarkView from '@/components/mainpage/mainbookmarkview';
 import { Pagination } from '@/components/parts/pagination';
-import { getShoiriAPI } from '@/request/shiori';
+import { userSessionAtom } from '@/jotai/atom';
+import fetcher from '@/request/fetcher';
+import {
+    getBookmarksApiUrl,
+    getShoiriAPI,
+    parseResponse,
+    urlstring,
+} from '@/request/shiori';
 import styles from '@/styles/pagination.module.css';
 import { t } from '@/translation';
+import { UserSession } from '@/types/user';
 
 export default function Index() {
     const [pagenumber, setPagenumber] = useState(1);
     const [totalPageNumber, setTotalPageNumber] = useState(1);
     const [keyword, setKeyword] = useState<string>('');
     const [keywordvalue, setKeywordvalue] = useDebounce(keyword, 500);
+    const [user, setUser] = useAtom<UserSession>(userSessionAtom);
 
     const toast = useToast();
     const router = useRouter();
-    let f = getShoiriAPI();
+
     const { data, error, isLoading, mutate } = useSWR(
-        f.getBookmarksApiUrl(
-            pagenumber,
-            keywordvalue.length > 0 ? keywordvalue : null,
-        ),
-        () =>
-            f
-                .getBookmarks(
-                    pagenumber,
-                    keywordvalue.length > 0 ? keywordvalue : null,
-                )
-                .catch(async (e) => {
-                    console.log('error', e);
-                    console.log('error', 'not login');
-                    if (e.text) {
-                        let t = await e.text();
-                        throw t;
-                    } else {
-                        throw e.statusText;
-                    }
-                }),
+        user
+            ? [getBookmarksApiUrl(pagenumber, keywordvalue), user?.session]
+            : null,
+        ([url, usersession]) =>
+            fetcher(url, null, usersession).then((r) => {
+                console.log('response:', r);
+                return parseResponse(r);
+            }),
     );
 
     function handleChangeKeyword(e: ChangeEvent<HTMLInputElement>) {
@@ -60,29 +58,29 @@ export default function Index() {
         setPagenumber(p);
     }
 
-    useEffect(() => {
-        if (error) {
-            console.log('error', error);
-            if (!toast.isActive('dashboard-needlogin')) {
-                toast({
-                    id: 'dashboard-needlogin',
-                    title: t('Please login'),
-                    description: (
-                        <div>
-                            String(error){' '}
-                            <Link id="logintoast" className="" href="/login">
-                                login
-                            </Link>
-                        </div>
-                    ),
-                    status: 'error',
-                    duration: 3000,
-                    isClosable: true,
-                });
-            }
-            router.push('/login');
-        }
-    });
+    // useEffect(() => {
+    //     if (error) {
+    //         console.log('error', error);
+    //         if (!toast.isActive('dashboard-needlogin')) {
+    //             toast({
+    //                 id: 'dashboard-needlogin',
+    //                 title: t('Please login'),
+    //                 description: (
+    //                     <div>
+    //                         {String(error)}
+    //                         <Link id="logintoast" className="" href="/login">
+    //                             login
+    //                         </Link>
+    //                     </div>
+    //                 ),
+    //                 status: 'error',
+    //                 duration: 3000,
+    //                 isClosable: true,
+    //             });
+    //         }
+    //         router.push('/login');
+    //     }
+    // });
 
     return (
         <Box width={'100%'}>
@@ -108,32 +106,37 @@ export default function Index() {
                 />
             </InputGroup>
             {/* keywordvalue:{keywordvalue} */}
+            <Button as={NextLink} href="/dashboard/search">
+                advanced search
+            </Button>
+            <Box>
+                {data ? (
+                    <>
+                        <MainBookmarkView
+                            bookmarks={data.bookmarks || []}
+                            updateTrigger={() => mutate()}
+                        />
+                        <Pagination
+                            className={styles.pagination}
+                            selectedClassName={styles.selected}
+                            pageNumber={pagenumber || 1}
+                            totalPageNumber={data.maxPage}
+                            hrefPrefix={null}
+                            pageRangeDisplayed={undefined}
+                            onClickPage={(p: number) => handleClickPage(p)}
+                        />
+                    </>
+                ) : (
+                    <div>loading isLoading:{isLoading}</div>
+                )}
+            </Box>
 
-            {data ? (
-                <>
-                    <MainBookmarkView
-                        bookmarks={data.bookmarks || []}
-                        updateTrigger={() => mutate()}
-                    />
-                    <Pagination
-                        className={styles.pagination}
-                        selectedClassName={styles.selected}
-                        pageNumber={pagenumber || 1}
-                        totalPageNumber={data.maxPage}
-                        hrefPrefix={null}
-                        pageRangeDisplayed={undefined}
-                        onClickPage={(p: number) => handleClickPage(p)}
-                    />
-                </>
-            ) : (
-                <></>
-            )}
             {error && (
                 <Box>
                     <p>error {JSON.stringify(error)}</p>
                 </Box>
             )}
-            {isLoading && <Box>loading</Box>}
+
             {/* pagination here */}
         </Box>
     );

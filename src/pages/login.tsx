@@ -19,16 +19,19 @@ import {
     useDisclosure,
     useMergeRefs,
 } from '@chakra-ui/react';
+import { Atom, useAtom } from 'jotai';
 import dynamic from 'next/dynamic';
 import { Router, useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { preload } from 'swr';
 
 import PasswordField from '@/components/login/passwordField';
-import { getShoiriAPI } from '@/request/shiori';
+import { userSessionAtom } from '@/jotai/atom';
+import { apilogin, getBookmarksApiUrl, getShoiriAPI } from '@/request/shiori';
 import { t } from '@/translation';
 
 export default function Login() {
+    const [user, setUser] = useAtom(userSessionAtom);
     const router = useRouter();
     let api = getShoiriAPI();
     const inputRef = useRef<{
@@ -47,7 +50,7 @@ export default function Login() {
             inputRef.current['password']?.value,
         );
 
-        api.login(
+        apilogin(
             inputRef.current['username']?.value as string,
             inputRef.current['password']?.value as string,
         )
@@ -65,18 +68,10 @@ export default function Login() {
                     session: string;
                 }) => {
                     console.log(jsonResponse);
-                    localStorage.setItem(
-                        'accountInfo',
-                        JSON.stringify(jsonResponse),
-                    );
-                    localStorage.setItem('XSessionId', jsonResponse.session);
-                    console.log(
-                        'XSessionId ls',
-                        localStorage.getItem('XSessionId'),
-                    );
+                    setUser(jsonResponse);
                     let pagenumber = 1;
                     // use preload to prevent redirecting from dashboard to the login page
-                    preload(api.getBookmarksApiUrl(pagenumber), () =>
+                    preload(getBookmarksApiUrl(pagenumber), () =>
                         api.getBookmarks(pagenumber).catch(async (e) => {
                             console.log('error', e);
                             console.log('error', 'not login');
@@ -138,7 +133,8 @@ export default function Login() {
                                     </FormLabel>
                                     <Input
                                         id="username"
-                                        type="username"
+                                        type="text"
+                                        autoComplete="on"
                                         ref={(el) =>
                                             (inputRef.current['username'] = el)
                                         }

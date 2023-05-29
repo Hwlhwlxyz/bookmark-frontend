@@ -1,28 +1,10 @@
-import {
-    Box,
-    FormControl,
-    FormHelperText,
-    FormLabel,
-    Image,
-    Input,
-    Tag,
-    TagCloseButton,
-    TagLabel,
-    TagLeftIcon,
-    TagRightIcon,
-    useToast,
-} from '@chakra-ui/react';
-import { useAtom } from 'jotai';
+import { useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
-import useSWR from 'swr';
+import { useState } from 'react';
 import { useSWRConfig } from 'swr';
 import useSWRMutation from 'swr/mutation';
 
-import AutocompleteTags from '@/components/editpage/autocompletetag';
 import EditPage from '@/components/editpage/editPage';
-import Editor from '@/components/editpage/editor';
-import { bookmarkAtom } from '@/jotai/atom';
 import { getShoiriAPI } from '@/request/shiori';
 import { t } from '@/translation';
 import { Bookmark, BookmarkTag } from '@/types/bookmark';
@@ -34,15 +16,6 @@ export default function Add() {
     const router = useRouter();
 
     const { mutate } = useSWRConfig();
-    const { trigger } = useSWRMutation(
-        f.getAddBookmarkUrl(),
-        async (_url: string, params) => {
-            console.log('params', params);
-            const res = await f.addBookmark(params.arg as Bookmark);
-            return res;
-        },
-        {},
-    );
 
     const handleSubmit = async (data: any) => {
         console.log('submit');
@@ -69,9 +42,9 @@ export default function Add() {
         };
 
         console.log(newBookmark);
-        await trigger(newBookmark as any)
+        await f
+            .addBookmark(newBookmark as any)
             .then((res) => {
-                setUpdatedData(true);
                 console.log('trigger', res);
                 if (!toast.isActive('dashboard-add-success')) {
                     toast({
@@ -103,28 +76,6 @@ export default function Add() {
                 }
             });
     };
-
-    // useEffect(() => {
-    //     const warningText =
-    //         'You have unsaved changes - are you sure you wish to leave this page?';
-    //     const handleWindowClose = (e: BeforeUnloadEvent) => {
-    //         if (!updatedData) return;
-    //         e.preventDefault();
-    //         return (e.returnValue = warningText);
-    //     };
-    //     const handleBrowseAway = () => {
-    //         if (!updatedData) return;
-    //         if (window.confirm(warningText)) return;
-    //         router.events.emit('routeChangeError');
-    //         throw 'routeChange aborted.';
-    //     };
-    //     window.addEventListener('beforeunload', handleWindowClose);
-    //     router.events.on('routeChangeStart', handleBrowseAway);
-    //     return () => {
-    //         window.removeEventListener('beforeunload', handleWindowClose);
-    //         router.events.off('routeChangeStart', handleBrowseAway);
-    //     };
-    // }, [updatedData]);
 
     return <EditPage defaultBookmark={null} onSubmit={handleSubmit} />;
 }

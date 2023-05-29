@@ -56,6 +56,10 @@ export default function MainBookmarkView(props: {
         onOpen();
     }
 
+    useEffect(() => {
+        console.log('view rerender');
+    });
+
     function handleClickDeleteConfirm() {
         if (bookmarkToDelete) {
             f.deleteBookmarks([bookmarkToDelete.id])
