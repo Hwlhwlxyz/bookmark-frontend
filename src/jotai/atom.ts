@@ -12,7 +12,15 @@ const atomWithLocalStorage = (key: string, initialValue: any) => {
             item = localStorage.getItem(key)
         }
         if (item !== null) {
-            return JSON.parse(item)
+            let returnValue = '';
+            try {
+                returnValue = JSON.parse(item);
+            }
+            catch (e) {
+                console.log('atomwithlocalstorage error', e);
+                return '';
+            }
+            return returnValue;
         }
         return initialValue
     }
