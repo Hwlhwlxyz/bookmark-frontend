@@ -9,6 +9,15 @@ e.g. you can add a file ".env.local" including following contents
 NEXT_PUBLIC_SHIORI_HOST=your_shiori_host
 ```
 
+To export static files, run:
+
+```
+npm install
+npm run export
+```
+
+Run shiori server, and use any server to proxy it. You can take `Caddyfile-example.txt` as an example.
+
 ---
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).

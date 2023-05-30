@@ -182,7 +182,7 @@ export default function Search() {
 
     return (
         <Box width={'100%'}>
-            {JSON.stringify(getValues())}
+            {/* {JSON.stringify(getValues())} */}
             <Box>
                 <Button as={NextLink} href="/dashboard/add">
                     add

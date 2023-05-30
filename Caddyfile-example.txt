@@ -1,0 +1,14 @@
+# shiori service
+:8081 {
+handle /api/* {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /bookmark/*/thumb {
+		reverse_proxy 127.0.0.1:8080
+	}
+	root * C:/path/to/shiori-service/bookmark-frontend/out
+	try_files {path} {path}.html?{query} {path}/index.html?{query}
+	
+	file_server
+	
+}
