@@ -8,6 +8,7 @@ import Layout from '@/components/layout/layout';
 import ProtectedRoute from '@/components/protectedRoute';
 import '@/styles/globals.css';
 import { t } from '@/translation';
+import { isSessionError } from '@/util/util';
 
 export default function App({ Component, pageProps, router }: AppProps) {
     const toast = useToast();
@@ -17,7 +18,9 @@ export default function App({ Component, pageProps, router }: AppProps) {
                 value={{
                     onError: (error, key) => {
                         if (error.status !== 403 && error.status !== 404) {
-                            {
+                            if (error.status == 500) {
+                                console.log(error.toString());
+                            } else if (isSessionError(error)) {
                                 console.log('error', error);
                                 if (!toast.isActive('dashboard-needlogin')) {
                                     toast({
@@ -41,6 +44,8 @@ export default function App({ Component, pageProps, router }: AppProps) {
                                     });
                                 }
                                 router.push('/login');
+                            } else {
+                                console.log(error);
                             }
                         }
                     },

@@ -156,7 +156,7 @@ export default function Search() {
                 // mutate();
             }
             if (name == 'keyword') {
-                setKeywordValue(value.keyword || '');
+                setKeywordValue(encodeURIComponent(value.keyword || ''));
             }
             if (name == 'excludedTags') {
                 console.log('exclude update');
