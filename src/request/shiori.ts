@@ -157,7 +157,7 @@ class shioriAPI {
         let data = {
             url: bookmark.url,
             createArchive: false,
-            public: 1,
+            // public: 1,
             tags: bookmark.tags,
             title: bookmark.title,
             excerpt: bookmark.excerpt,

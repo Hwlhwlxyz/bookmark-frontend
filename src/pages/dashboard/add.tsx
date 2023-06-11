@@ -64,9 +64,9 @@ export default function Add() {
             })
             .catch(async (err: Response) => {
                 let errorString = await err.text();
-                if (!toast.isActive('dashboard-add-faile')) {
+                if (!toast.isActive('dashboard-add-failed')) {
                     toast({
-                        id: 'dashboard-add-faile',
+                        id: 'dashboard-add-failed',
                         title: t('addFailed'),
                         description: String(errorString),
                         status: 'error',

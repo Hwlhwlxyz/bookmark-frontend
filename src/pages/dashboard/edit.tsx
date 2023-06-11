@@ -8,6 +8,7 @@ import {
     TagLabel,
     TagLeftIcon,
     TagRightIcon,
+    useToast,
 } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
@@ -22,11 +23,12 @@ import EditPage from '@/components/editpage/editPage';
 import Editor from '@/components/editpage/editor';
 import { bookmarkAtom } from '@/jotai/atom';
 import { getShoiriAPI } from '@/request/shiori';
+import { t } from '@/translation';
 import { Bookmark, BookmarkTag } from '@/types/bookmark';
 
 export default function Edit() {
     const [bookmarkToEdit, setBookmarkToEdit] = useAtom(bookmarkAtom);
-
+    const toast = useToast();
     let f = getShoiriAPI();
     const { data, error, isLoading } = useSWR('/api/tags', () =>
         f
@@ -79,15 +81,42 @@ export default function Edit() {
             tags: newTags,
         };
 
-        trigger(newBookmark as any).then((res) => {
-            setBookmarkToEdit(res);
-            console.log('trigger', res);
-            // if (res) {
-            //     Object.entries(res).forEach(([name, value]: any) =>
-            //         setValue(name, value),
-            //     );
-            // }
-        });
+        trigger(newBookmark as any)
+            .then((res) => {
+                setBookmarkToEdit(res);
+                console.log('trigger', res);
+                // if (res) {
+                //     Object.entries(res).forEach(([name, value]: any) =>
+                //         setValue(name, value),
+                //     );
+                // }
+            })
+            .then((res) => {
+                console.log('trigger', res);
+                if (!toast.isActive('dashboard-edit-success')) {
+                    toast({
+                        id: 'dashboard-edit-success',
+                        title: t('editSuccessfully'),
+                        description: String('success'),
+                        status: 'success',
+                        duration: 3000,
+                        isClosable: true,
+                    });
+                }
+            })
+            .catch(async (err: Response) => {
+                let errorString = await err.text();
+                if (!toast.isActive('dashboard-add-failed')) {
+                    toast({
+                        id: 'dashboard-edit-failed',
+                        title: t('editFailed'),
+                        description: String(errorString),
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true,
+                    });
+                }
+            });
     };
 
     return (
