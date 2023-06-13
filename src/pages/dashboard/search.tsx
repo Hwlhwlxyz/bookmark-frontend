@@ -82,6 +82,7 @@ export default function Search() {
                 console.log('response:', r);
                 return parseResponse(r);
             }),
+        {},
     );
 
     const tagswatch = watch(['tags', 'excludedTags']);
@@ -134,6 +135,12 @@ export default function Search() {
     useEffect(() => {
         if (parseObjFromUrl(String(router.query.tags)) != null) {
             setValue('tags', parseObjFromUrl(String(router.query.tags)));
+            setQueryObj({
+                tags: parseObjFromUrl(
+                    String(router.query.tags),
+                ) as BookmarkTag[],
+                excludedTags: null,
+            });
         }
     }, [router.query.tags]);
 
@@ -182,6 +189,7 @@ export default function Search() {
 
     return (
         <Box width={'100%'}>
+            {isLoading && <p>isLoading: {isLoading}</p>}
             {/* {JSON.stringify(getValues())} */}
             <Box>
                 <Button as={NextLink} href="/dashboard/add">
