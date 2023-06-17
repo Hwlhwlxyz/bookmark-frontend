@@ -219,6 +219,7 @@ export default function Search() {
                         })}
                         render={({ field: { onChange, value, ref } }) => (
                             <Select
+                                instanceId={String(value)}
                                 placeholder="add tags"
                                 ref={ref}
                                 value={value?.map((e: string) => {

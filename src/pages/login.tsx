@@ -18,6 +18,7 @@ import {
     forwardRef,
     useDisclosure,
     useMergeRefs,
+    useToast,
 } from '@chakra-ui/react';
 import { Atom, useAtom } from 'jotai';
 import dynamic from 'next/dynamic';
@@ -31,6 +32,7 @@ import { apilogin, getBookmarksApiUrl, getShoiriAPI } from '@/request/shiori';
 import { t } from '@/translation';
 
 export default function Login() {
+    const toast = useToast();
     const [user, setUser] = useAtom(userSessionAtom);
     const router = useRouter();
     let api = getShoiriAPI();
@@ -88,6 +90,16 @@ export default function Login() {
             .then(() => router.push('/dashboard'))
             .catch((e) => {
                 console.log('login error:', e);
+                if (!toast.isActive('dashboard-needlogin')) {
+                    toast({
+                        id: 'dashboard-needlogin',
+                        title: t('login failed'),
+                        description: <div>{String(e.statusText)}</div>,
+                        status: 'error',
+                        duration: 3000,
+                        isClosable: true,
+                    });
+                }
             });
     };
 

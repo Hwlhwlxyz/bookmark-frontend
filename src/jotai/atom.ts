@@ -39,4 +39,4 @@ const atomWithLocalStorage = (key: string, initialValue: any) => {
     return derivedAtom
 }
 
-export const userSessionAtom = atomWithLocalStorage('XSessionId', null)
+export const userSessionAtom = atomWithLocalStorage('UserSessionInfo', null)

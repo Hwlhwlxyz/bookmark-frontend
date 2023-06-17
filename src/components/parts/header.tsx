@@ -16,7 +16,11 @@ import {
     useColorModeValue,
     useDisclosure,
 } from '@chakra-ui/react';
+import { useAtom } from 'jotai';
 import { ReactNode } from 'react';
+
+import { userSessionAtom } from '@/jotai/atom';
+import { t } from '@/translation';
 
 // import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 
@@ -39,6 +43,7 @@ const NavLink = ({ href, children }: { href: string; children: ReactNode }) => (
 
 export default function Header(props: { marginLeftNumber: string }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const [user, setUser] = useAtom(userSessionAtom);
 
     return (
         <Box
@@ -70,7 +75,7 @@ export default function Header(props: { marginLeftNumber: string }) {
                         alignItems={'center'}
                     >
                         {/* <Box>Logo</Box> */}
-                        <Input placeholder="search"></Input>
+                        {/* <Input placeholder="search"></Input> */}
                         <HStack
                             as={'nav'}
                             spacing={4}
@@ -101,10 +106,19 @@ export default function Header(props: { marginLeftNumber: string }) {
                                 menu
                             </MenuButton>
                             <MenuList>
-                                <MenuItem>Link 1</MenuItem>
-                                <MenuItem>Link 2</MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        setUser('logout');
+                                        console.log('logout');
+                                    }}
+                                    as="a"
+                                    href="/login"
+                                >
+                                    {t('logout')}
+                                </MenuItem>
+                                {/* <MenuItem>Link 2</MenuItem>
                                 <MenuDivider />
-                                <MenuItem>Link 3</MenuItem>
+                                <MenuItem>Link 3</MenuItem> */}
                             </MenuList>
                         </Menu>
                     </Flex>

@@ -1,6 +1,8 @@
 {
     "signin": "登录",
     "Please login": "请登录",
+    "login failed":"登录失败",
+    "logout":"退出登录",
     "addSuccessfully":"添加成功",
     "addFailed":"添加失败",
     "editSuccessfully":"编辑成功",

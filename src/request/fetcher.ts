@@ -12,10 +12,10 @@ function updateOptions(options: any, session: string | null) {
             'X-Session-Id': session,
         };
     }
-    else if (localStorage.XSessionId) {
+    else if (localStorage.UserSessionInfo && localStorage.UserSessionInfo.session) {
         update.headers = {
             ...update.headers,
-            'X-Session-Id': `${JSON.parse(localStorage.XSessionId).session}`,
+            'X-Session-Id': `${JSON.parse(localStorage.UserSessionInfo).session}`,
         };
     }
     console.log("updatoptions:", update)

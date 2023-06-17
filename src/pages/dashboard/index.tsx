@@ -5,12 +5,13 @@ import {
     Input,
     InputGroup,
     InputLeftElement,
+    Link,
 } from '@chakra-ui/react';
 import { useToast } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { useDebounce } from 'use-debounce';
 
@@ -20,6 +21,7 @@ import { userSessionAtom } from '@/jotai/atom';
 import fetcher from '@/request/fetcher';
 import { getBookmarksApiUrl, parseResponse } from '@/request/shiori';
 import styles from '@/styles/pagination.module.css';
+import { t } from '@/translation';
 import { UserSession } from '@/types/user';
 
 export default function Index() {
@@ -29,13 +31,8 @@ export default function Index() {
     const [keywordvalue, setKeywordvalue] = useDebounce(keyword, 500);
     const [user, setUser] = useAtom<UserSession>(userSessionAtom);
 
-    const toast = useToast();
-    const router = useRouter();
-
     const { data, error, isLoading, mutate } = useSWR(
-        user
-            ? [getBookmarksApiUrl(pagenumber, keywordvalue), user?.session]
-            : null,
+        [getBookmarksApiUrl(pagenumber, keywordvalue), user?.session],
         ([url, usersession]) =>
             fetcher(url, null, usersession).then((r) => {
                 console.log('response:', r);
@@ -52,25 +49,29 @@ export default function Index() {
     }
 
     // useEffect(() => {
-    //     if (error) {
+    //     if (error || !user || user.session == 'logout') {
     //         console.log('error', error);
-    //         if (!toast.isActive('dashboard-needlogin')) {
-    //             toast({
-    //                 id: 'dashboard-needlogin',
-    //                 title: t('Please login'),
-    //                 description: (
-    //                     <div>
-    //                         {String(error)}
-    //                         <Link id="logintoast" className="" href="/login">
-    //                             login
-    //                         </Link>
-    //                     </div>
-    //                 ),
-    //                 status: 'error',
-    //                 duration: 3000,
-    //                 isClosable: true,
-    //             });
-    //         }
+    //         error.text().then((responseText: any) => {
+    //             console.log(responseText);
+    //             if (!toast.isActive('dashboard-needlogin')) {
+    //                 toast({
+    //                     id: 'dashboard-needlogin',
+    //                     title: t('Please login'),
+    //                     description: (
+    //                         <div>
+    //                             {responseText}
+    //                             {/* <Link id="logintoast" className="" href="/login">
+    //                                 login
+    //                             </Link> */}
+    //                         </div>
+    //                     ),
+    //                     status: 'error',
+    //                     duration: 3000,
+    //                     isClosable: true,
+    //                 });
+    //             }
+    //         });
+
     //         router.push('/login');
     //     }
     // });
