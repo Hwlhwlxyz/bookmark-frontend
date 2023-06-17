@@ -23,7 +23,7 @@ import {
 import { Atom, useAtom } from 'jotai';
 import dynamic from 'next/dynamic';
 import { Router, useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { preload } from 'swr';
 
 import PasswordField from '@/components/login/passwordField';
@@ -42,7 +42,7 @@ export default function Login() {
     }>({ username: null, password: null });
 
     const handleSubmit = (event: any) => {
-        event.preventDefault();
+        event?.preventDefault();
         // const username = event.target.username.value;
         // const password = event.target.password.value;
         // console.log(`Hello ${username} ${password}!`);
@@ -103,6 +103,12 @@ export default function Login() {
             });
     };
 
+    function comfirmLogin(e: KeyboardEvent<HTMLInputElement>): void {
+        if ((e.key = 'Enter')) {
+            handleSubmit(undefined);
+        }
+    }
+
     return (
         <Container
             maxW="lg"
@@ -153,6 +159,7 @@ export default function Login() {
                                     />
                                 </FormControl>
                                 <PasswordField
+                                    onKeyUp={(e) => comfirmLogin(e)}
                                     ref={(el) =>
                                         (inputRef.current['password'] = el)
                                     }
