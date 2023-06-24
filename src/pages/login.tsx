@@ -104,7 +104,7 @@ export default function Login() {
     };
 
     function comfirmLogin(e: KeyboardEvent<HTMLInputElement>): void {
-        if ((e.key = 'Enter')) {
+        if (e.key == 'Enter') {
             handleSubmit(undefined);
         }
     }
