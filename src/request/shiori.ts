@@ -257,6 +257,7 @@ export function getShoiriAPI() {
     if (process.env.NEXT_PUBLIC_SHIORI_HOST) {
         baseUrl = process.env.NEXT_PUBLIC_SHIORI_HOST;
     }
+    console.log(baseUrl);
     api = new shioriAPI(baseUrl);
     return api;
 }
