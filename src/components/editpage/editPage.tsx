@@ -86,7 +86,7 @@ export default function EditPage(props: EditPageProps) {
         );
     }
     return (
-        <Box style={{ width: '100%' }}>
+        <Box style={{ width: '100%', height: '100%' }}>
             <p>
                 {/* bookmarkToEdit:{bookmarkToEdit?.url}
                 {JSON.stringify(bookmarkToEdit)} */}
@@ -118,22 +118,6 @@ export default function EditPage(props: EditPageProps) {
                 </Box>
                 <Box>
                     <Controller
-                        name="excerpt"
-                        control={control}
-                        // defaultValue={bookmarkToEdit?.tags.map((e: BookmarkTag) => {
-                        //   return { value: e.name, label: e.name };
-                        // })}
-                        render={({ field: { onChange, value } }) => (
-                            <Editor
-                                value={value}
-                                onChange={(val) => onChange(val)}
-                            />
-                        )}
-                    />
-                </Box>
-
-                <Box>
-                    <Controller
                         name="tags"
                         control={control}
                         // defaultValue={bookmarkToEdit?.tags.map((e: BookmarkTag) => {
@@ -141,7 +125,6 @@ export default function EditPage(props: EditPageProps) {
                         // })}
                         render={({ field: { onChange } }) => (
                             <CreatableSelect
-                                // value={options.filter(c => value.includes(c.value))}
                                 defaultValue={
                                     bookmarkToEdit?.tags
                                         ? bookmarkToEdit.tags.map(
@@ -157,6 +140,7 @@ export default function EditPage(props: EditPageProps) {
                                 onChange={(val) =>
                                     onChange(val.map((c) => c.value))
                                 }
+                                placeholder={'Select Tags...'}
                                 options={data}
                                 isMulti
                                 name="bookmarktags"
@@ -167,6 +151,22 @@ export default function EditPage(props: EditPageProps) {
                         )}
                     />
                 </Box>
+                <Box>
+                    <Controller
+                        name="excerpt"
+                        control={control}
+                        // defaultValue={bookmarkToEdit?.tags.map((e: BookmarkTag) => {
+                        //   return { value: e.name, label: e.name };
+                        // })}
+                        render={({ field: { onChange, value } }) => (
+                            <Editor
+                                value={value}
+                                onChange={(val) => onChange(val)}
+                            />
+                        )}
+                    />
+                </Box>
+
                 <Button type="submit">submit</Button>
             </form>
         </Box>
